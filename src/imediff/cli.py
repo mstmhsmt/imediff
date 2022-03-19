@@ -100,7 +100,11 @@ class TextData:  # Non-TUI data
                 j for j, (tag, i1, i2, j1, j2) in enumerate(opcodes) if tag != "E"
             ]
         else:
-            sequence = SequenceMatcher3(list_a, list_b, list_c, 1)
+            if args.compat24:
+                sequence = SequenceMatcher3(list_a, list_b, list_c, 0,
+                                            lambda x: x in ["\n", "#\n", "//\n"])
+            else:
+                sequence = SequenceMatcher3(list_a, list_b, list_c, 1)
             opcodes = sequence.get_opcodes()
             # Set initial mode to "a" or "d"
             self.opcodes = [

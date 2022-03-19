@@ -114,8 +114,8 @@ class LineMatcher:
         # initialize
         self.a = a
         self.b = b
-        if not (linerule >= 0 and linerule < 20):
-            error_exit("E: linerule should be between 0 and 19 but {}".format(linerule))
+        if not (linerule >= 0 and linerule < 30):
+            error_exit("E: linerule should be between 0 and 29 but {}".format(linerule))
         # linerule:
         # 0      r""        -- drop none between text, but strip
         # 1      r"\s+"     -- drop all whitespaces
@@ -125,6 +125,10 @@ class LineMatcher:
         # 11     r"\s+"     -- drop all whitespaces and lowercase
         # 12     r"[\s\"']" -- drop all whitespaces and quotes and lowercase
         # 13     r"\W+"     -- drop all non-alphanumerics and lowercase
+        # 20     r""        -- drop none between text, but strip
+        # 21     r"\s+"     -- contract all whitespaces to " "
+        # 22     r"[\s\"']" -- contract all whitespaces and quotes to " "
+        # 23     r"\W+"     -- contract all non-alphanumerics to " "
         if (linerule % 10) == 0:
             re_preform = re.compile(r"")
         elif (linerule % 10) == 1:
@@ -139,15 +143,19 @@ class LineMatcher:
         for ax in a:
             if linerule < 10:
                 filtered_ax = re_preform.sub("", ax).strip()
-            else:
+            elif linerule < 20:
                 filtered_ax = re_preform.sub("", ax).strip().lower()
+            else:
+                filtered_ax = re_preform.sub(" ", ax).strip()
             self.a_int.append(filtered_ax)
         self.b_int = []
         for bx in b:
             if linerule < 10:
                 filtered_bx = re_preform.sub("", bx).strip()
-            else:
+            elif linerule < 20:
                 filtered_bx = re_preform.sub("", bx).strip().lower()
+            else:
+                filtered_bx = re_preform.sub(" ", bx).strip()
             self.b_int.append(filtered_bx)
         self.int = _LineMatcher(
             self.a_int, self.b_int, 0, len(self.a_int), 0, len(self.b_int)

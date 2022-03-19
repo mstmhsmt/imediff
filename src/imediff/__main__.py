@@ -118,6 +118,9 @@ def initialize_args():
         "-g", action="store_true", help="Start with good merge mode (only for diff3)"
     )
     group.add_argument(
+        "--compat24", action="store_true", help="Emulate version 2.4 (only for diff3)"
+    )
+    group.add_argument(
         "--isjunk",
         action="store_true",
         help="Force isjunk to None instead of the default list",
@@ -127,7 +130,7 @@ def initialize_args():
         "-l",
         action="store",
         default=2,
-        help="Line alignment matching rule (0,1,2,3,10,11,12,13)",
+        help="Line alignment matching rule (0,1,2,3,10,11,12,13,20,21,22,23)",
     )
     pa.add_argument("--mode", "-m", action="store_true", help="Display mode column")
     pa.add_argument("--mono", action="store_true", help="Force monochrome display")
