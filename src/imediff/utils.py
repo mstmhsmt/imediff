@@ -70,7 +70,8 @@ def read_lines(filename):
         lines = []
     else:
         try:
-            with open(filename, buffering=io.DEFAULT_BUFFER_SIZE) as fp:
+            with open(filename, buffering=io.DEFAULT_BUFFER_SIZE,
+                      encoding='utf-8', errors='replace') as fp:
                 lines = fp.readlines()  # read into list
         except IOError as e:
             (error, message) = e.args
@@ -115,7 +116,8 @@ def write_file(filename, output):
         sys.stderr.write(output)
     else:
         try:
-            with open(filename, mode="w", buffering=io.DEFAULT_BUFFER_SIZE) as fp:
+            with open(filename, mode="w", buffering=io.DEFAULT_BUFFER_SIZE,
+                      encoding='utf-8', errors='replace') as fp:
                 fp.write(output)
         except IOError:
             error_exit("Error in creating output file: {}".format(filename))
