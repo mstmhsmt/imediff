@@ -125,7 +125,7 @@ class LineMatcher:
         # 11     r"\s+"     -- drop all whitespaces and lowercase
         # 12     r"[\s\"']" -- drop all whitespaces and quotes and lowercase
         # 13     r"\W+"     -- drop all non-alphanumerics and lowercase
-        # 20     r""        -- drop none between text, but strip
+        # 20     r""        -- drop none between text, but rstrip (indent should be kept)
         # 21     r"\s+"     -- contract all whitespaces to " "
         # 22     r"[\s\"']" -- contract all whitespaces and quotes to " "
         # 23     r"\W+"     -- contract all non-alphanumerics to " "
@@ -146,7 +146,7 @@ class LineMatcher:
             elif linerule < 20:
                 filtered_ax = re_preform.sub("", ax).strip().lower()
             else:
-                filtered_ax = re_preform.sub(" ", ax).strip()
+                filtered_ax = re_preform.sub(" ", ax).rstrip()
             self.a_int.append(filtered_ax)
         self.b_int = []
         for bx in b:
@@ -155,7 +155,7 @@ class LineMatcher:
             elif linerule < 20:
                 filtered_bx = re_preform.sub("", bx).strip().lower()
             else:
-                filtered_bx = re_preform.sub(" ", bx).strip()
+                filtered_bx = re_preform.sub(" ", bx).rstrip()
             self.b_int.append(filtered_bx)
         self.int = _LineMatcher(
             self.a_int, self.b_int, 0, len(self.a_int), 0, len(self.b_int)

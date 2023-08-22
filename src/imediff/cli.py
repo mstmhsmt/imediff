@@ -88,7 +88,7 @@ class TextData:  # Non-TUI data
             )
         # parse input data
         if self.diff_mode == 2:
-            sequence = LineMatcher(list_a, list_b)
+            sequence = LineMatcher(list_a, list_b, linerule=self.linerule)
             opcodes = sequence.get_opcodes()
             k1 = k2 = None
             # Set initial mode to "a" or "d"
@@ -104,7 +104,7 @@ class TextData:  # Non-TUI data
                 sequence = SequenceMatcher3(list_a, list_b, list_c, 0,
                                             lambda x: x in ["\n", "#\n", "//\n"])
             else:
-                sequence = SequenceMatcher3(list_a, list_b, list_c, 1)
+                sequence = SequenceMatcher3(list_a, list_b, list_c, 1, linerule=self.linerule)
             opcodes = sequence.get_opcodes()
             # Set initial mode to "a" or "d"
             self.opcodes = [

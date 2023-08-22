@@ -129,6 +129,7 @@ def initialize_args():
         "--linerule",
         "-l",
         action="store",
+        type=int,
         default=2,
         help="Line alignment matching rule (0,1,2,3,10,11,12,13,20,21,22,23)",
     )
