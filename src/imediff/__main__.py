@@ -266,7 +266,8 @@ def main():
     ch.setLevel(logging.ERROR)
     # create formatter and add it to the handlers
     formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        # "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        '[%(asctime)s][%(levelname)s][%(module)s][%(funcName)s] %(message)s'
     )
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
@@ -284,7 +285,7 @@ def main():
     args.edit_cmd = shutil.which(editor)
     if args.edit_cmd is None:
         args.edit_cmd = "/usr/bin/editor"  # safe fall back
-    logger.debug("external editor {} found as {}".format(editor, args.edit_cmd))
+    logger.debug(f"external editor {editor} found as {args.edit_cmd}")
 
     # normalize and process non-standard situation
     if args.version:

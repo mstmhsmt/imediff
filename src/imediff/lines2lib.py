@@ -312,31 +312,25 @@ class _LineMatcher:
         if self.depth == 0:  # depth = 0
             side = 0
             logger.debug(
-                "===  a[{}:{}]/b[{}:{}]  ===  d={:02d}  ===  line[:]  ===".format(
-                    self.is1, self.is2, self.js1, self.js2, self.depth
-                )
+                f"=== a[{self.is1}:{self.is2}]/b[{self.js1}:{self.js2}]"
+                f" === d={self.depth:02d} === line[:] ==="
             )
         elif self.depth > 0:  # depth > 0
             if self.depth % 2 == 1:  # depth = 1, 3, 5, ...
                 side = +1
                 logger.debug(
-                    "===  a[{}:{}]/b[{}:{}]  ===  d={:02d}  ===  line[:{:02d}] ===".format(
-                        self.is1, self.is2, self.js1, self.js2, self.depth, self.length
-                    )
+                    f"=== a[{self.is1}:{self.is2}]/b[{self.js1}:{self.js2}]"
+                    f" === d={self.depth:02d} === line[:{self.length:02d}] ==="
                 )
             else:  # self.depth % 2 == 0:  # depth = 2, 4, 6, ...
                 side = -1
                 logger.debug(
-                    "===  a[{}:{}]/b[{}:{}]  ===  d={:02d}  ===  line[-{:02d}:] ===".format(
-                        self.is1, self.is2, self.js1, self.js2, self.depth, self.length
-                    )
+                    f"=== a[{self.is1}:{self.is2}]/b[{self.js1}:{self.js2}]"
+                    f" === d={self.depth:02d} === line[-{self.length:02d}:] ==="
                 )
         else:
-            error_exit(
-                "===  a[{}:{}]/b[{}:{}]  ===  d={:02d} should be non-negative".format(
-                    self.is1, self.is2, self.js1, self.js2, self.depth
-                )
-            )
+            error_exit(f"=== a[{self.is1}:{self.is2}]/b[{self.js1}:{self.js2}]"
+                       f" === d={self.depth:02d} should be non-negative")
         if side == 0:
             # self.is1, self.is2, self.js1, self.js2 are known to cover all
             am = self.a
@@ -352,24 +346,22 @@ class _LineMatcher:
             am = []
             bm = []
             for i in range(self.is1, self.is2):
-                am.append(self.a[i][-self.length :])
+                am.append(self.a[i][-self.length:])
             for j in range(self.js1, self.js2):
-                bm.append(self.b[j][-self.length :])
+                bm.append(self.b[j][-self.length:])
         for i in range(self.is1, self.is2):
             logger.debug(
-                "filter a[{}] -> am[{}]='{}'".format(i, i - self.is1, am[i - self.is1])
+                f"filter a[{i}] -> am[{i-self.is1}]='{am[i-self.is1]}'"
             )
         for j in range(self.js1, self.js2):
             logger.debug(
-                "filter b[{}] -> bm[{}]='{}'".format(j, j - self.js1, bm[j - self.js1])
+                f"filter b[{j}] -> bm[{j-self.js1}]='{bm[j-self.js1]}'"
             )
         seq = SequenceMatcher(None, am, bm)
         match = []
         for tag, i1, i2, j1, j2 in seq.get_opcodes():
             logger.debug(
-                ">>> tag={}  ===  a[{}:{}]/b[{}:{}]".format(
-                    tag, i1 + self.is1, i2 + self.is1, j1 + self.js1, j2 + self.js1
-                )
+                f">>> tag={tag} === a[{i1+self.is1}:{i2+self.is1}]/b[{j1+self.js1}:{j2+self.js1}]"
             )
             if tag == "equal":
                 for i in range(i1, i2):
@@ -447,9 +439,7 @@ class _LineMatcher:
                         )
                     )
             logger.debug(
-                "<<< tag={}  ===  a[{}:{}]/b[{}:{}]".format(
-                    tag, i1 + self.is1, i2 + self.is1, j1 + self.js1, j2 + self.js1
-                )
+                f"<<< tag={tag} === a[{i1+self.is1}:{i2+self.is1}]/b[{j1+self.js1}:{j2+self.js1}]"
             )
         return match
 
@@ -457,11 +447,11 @@ class _LineMatcher:
         """ """
         for tag, i1, i2, j1, j2 in self.get_opcodes():
             if (i1 + 1) == i2 and (j1 + 1) == j2:
-                print("match: {} -> {}, tag = {}".format(i1, j1, tag))
-                print("    a: {}".format(self.a[i1]))
-                print("    b: {}".format(self.b[j1]))
+                print(f"match: {i1} -> {j1}, tag = {tag}")
+                print(f"    a: {self.a[i1]}")
+                print(f"    b: {self.b[j1]}")
             else:
-                print("UNmatch: {}:{} -> {}:{}, tag = {}".format(i1, i2, j1, j2, tag))
+                print(f"UNmatch: {i1}:{i2} -> {j1}:{j2}, tag = {tag}")
 
 
 if __name__ == "__main__":

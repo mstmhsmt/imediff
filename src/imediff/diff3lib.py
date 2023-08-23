@@ -306,9 +306,7 @@ class SequenceMatcher3:
         len_ba = len(opcodes_ba)
         len_bc = len(opcodes_bc)
         logger.debug(
-            "diff3lib: matcher={} tag={} len_ba={} len_bc={}".format(
-                matcher, tag_equal, len_ba, len_bc
-            )
+            f"matcher={matcher} tag={tag_equal} len_ba={len_ba} len_bc={len_bc}"
         )
         il = jl = kl = 0  # range lower end for b, a, c (next in next round)
         ih = jh = kh = 0  # range high end for b, a, c (next in next round)
@@ -319,12 +317,12 @@ class SequenceMatcher3:
             if n_ba < len_ba:
                 (tag_ba, il_ba, ih_ba, jl_ba, jh_ba) = opcodes_ba[n_ba]
                 logger.debug(
-                    "diff3lib: NORMAL n_bc={} < len_bc={}".format(n_bc, len_bc)
+                    f"NORMAL n_bc={n_bc} < len_bc={len_bc}"
                 )
             elif len_ba == 0:
                 (tag_ba, il_ba, ih_ba, jl_ba, jh_ba) = (tag_equal, 0, 0, 0, 0)
                 logger.debug(
-                    "diff3lib: UNDERRUN n_ba={} len_ba={}".format(n_ba, len_ba)
+                    f"UNDERRUN n_ba={n_ba} len_ba={len_ba}"
                 )
             else:
                 (tag_ba, il_ba, ih_ba, jl_ba, jh_ba) = opcodes_ba[len_ba - 1]
@@ -335,16 +333,18 @@ class SequenceMatcher3:
                     jh_ba,
                     jh_ba,
                 )
-                logger.debug("diff3lib: OVERRUN n_ba={} len_ba={}".format(n_ba, len_ba))
+                logger.debug(
+                    f"OVERRUN n_ba={n_ba} len_ba={len_ba}"
+                )
             if n_bc < len_bc:
                 (tag_bc, il_bc, ih_bc, kl_bc, kh_bc) = opcodes_bc[n_bc]
                 logger.debug(
-                    "diff3lib: NORMAL n_bc={} < len_bc={}".format(n_bc, len_bc)
+                    f"NORMAL n_bc={n_bc} < len_bc={len_bc}"
                 )
             elif len_bc == 0:
                 (tag_bc, il_bc, ih_bc, kl_bc, kh_bc) = (tag_equal, 0, 0, 0, 0)
                 logger.debug(
-                    "diff3lib: UNDERRUN n_bc={} len_bc={}".format(n_bc, len_bc)
+                    f"UNDERRUN n_bc={n_bc} len_bc={len_bc}"
                 )
             else:
                 (tag_bc, il_bc, ih_bc, kl_bc, kh_bc) = opcodes_bc[len_bc - 1]
@@ -355,7 +355,9 @@ class SequenceMatcher3:
                     kh_bc,
                     kh_bc,
                 )
-                logger.debug("diff3lib: OVERRUN n_bc={} len_bc={}".format(n_bc, len_bc))
+                logger.debug(
+                    f"OVERRUN n_bc={n_bc} len_bc={len_bc}"
+                )
             # get tag for this set of opcodes if high range value is available
             if tag == "N":
                 pass  # All undecided comes in as tag == "N", otherwise tag == ""
@@ -399,15 +401,11 @@ class SequenceMatcher3:
                     tag = "N"
             if jh is None:
                 logger.debug(
-                    "diff3lib: UNDECIDED_ba tag={}, jl={}, jh=None, il={}, ih={}, kl={}, kh={}".format(
-                        tag, jl, il, ih, kl, kh
-                    )
+                    f"UNDECIDED_ba tag={tag}, jl={jl}, jh=None, il={il}, ih={ih}, kl={kl}, kh={kh}"
                 )
             elif kh is None:
                 logger.debug(
-                    "diff3lib: UNDECIDED_bc tag={}, jl={}, jh={}, il={}, ih={}, kl={}, kh=None".format(
-                        tag, jl, jh, il, ih, kl
-                    )
+                    f"UNDECIDED_bc tag={tag}, jl={jl}, jh={jh}, il={il}, ih={ih}, kl={kl}, kh=None"
                 )
             else:
                 if tag == "N":
@@ -415,9 +413,7 @@ class SequenceMatcher3:
                         tag = "e"
                 answer.append((tag, jl, jh, il, ih, kl, kh))
                 logger.debug(
-                    "diff3lib: APPEND tag={}, jl={}, jh={}, il={}, ih={}, kl={}, kh={}".format(
-                        tag, jl, jh, il, ih, kl, kh
-                    )
+                    f"APPEND tag={tag}, jl={jl}, jh={jh}, il={il}, ih={ih}, kl={kl}, kh={kh}"
                 )
                 il = ih
                 jl = jh

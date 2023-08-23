@@ -82,9 +82,8 @@ class TextData:  # Non-TUI data
             self.kc[ord(key_char[:1])] = ord(cmd_name[-1:])
             self.rkc[cmd_name[-1:]] = ord(key_char[:1])
             logger.debug(
-                "[key] section: left_side='{}' right_side='{}' : self.krc[{}] = '{}'".format(
-                    cmd_name, key_char, cmd_name[-1:], self.rkc[cmd_name[-1:]]
-                )
+                f"[key] section: left_side='{cmd_name}' right_side='{key_char}'"
+                f" : self.krc[{cmd_name[-1:]}] = '{self.rkc[cmd_name[-1:]]}'"
             )
         # parse input data
         if self.diff_mode == 2:
@@ -94,7 +93,7 @@ class TextData:  # Non-TUI data
             # Set initial mode to "a" or "d"
             self.opcodes = [
                 (tag, i1, i2, j1, j2, k1, k2, "a" if tag == "E" else "d", row, bf)
-                for (tag, i1, i2, j1, j2) in opcodes
+                for tag, i1, i2, j1, j2 in opcodes
             ]
             self.actives = [
                 j for j, (tag, i1, i2, j1, j2) in enumerate(opcodes) if tag != "E"
@@ -136,11 +135,10 @@ class TextData:  # Non-TUI data
 
     def merge_diff(self, i):
         """Return content for diff by line"""
-        (tag, i1, i2, j1, j2, k1, k2, mode, row, bf) = self.opcodes[i]
+        tag, i1, i2, j1, j2, k1, k2, mode, row, bf = self.opcodes[i]
         logger.debug(
-            "merge_wdiff: tag={} a[{}:{}]/b[{}:{}]/c[{}:{}] mode={}, row={}, bf='{}'".format(
-                tag, i1, i2, j1, j2, k1, k2, mode, row, bf
-            )
+            f"tag={tag} a[{i1}:{i2}]/b[{j1}:{j2}]/c[{k1}:{k2}]"
+            f" mode={mode} row={row} bf='{bf}'"
         )
         content = list()
         content += [self.ls0 % self.file_a]
@@ -155,15 +153,19 @@ class TextData:  # Non-TUI data
             content += [self.ls2]
             content += self.list_c[k1:k2]
             content += [self.ls3 % self.file_c]
+
+        # logger.debug(f'tag={tag}')
+        # for x in content:
+        #     logger.debug(f'{x.strip()}')
+
         return content
 
     def merge_wdiff2(self, i):
         """Return content for wdiff by line (2 files)"""
         (tag, i1, i2, j1, j2, k1, k2, mode, row, bf) = self.opcodes[i]
         logger.debug(
-            "merge_wdiff2: tag={} a[{}:{}]/b[{}:{}]/c[{}:{}] mode={}, row={}, bf='{}'".format(
-                tag, i1, i2, j1, j2, k1, k2, mode, row, bf
-            )
+            f"tag={tag} a[{i1}:{i2}]/b[{j1}:{j2}]/c[{k1}:{k2}]"
+            f" mode={mode} row={row} bf='{bf}'"
         )
         line_a = "".join(self.list_a[i1:i2])
         line_b = "".join(self.list_b[j1:j2])
@@ -188,19 +190,24 @@ class TextData:  # Non-TUI data
 
     def merge_wdiff3(self, i):
         """Return content for wdiff by line (3 files)"""
-        (tag, i1, i2, j1, j2, k1, k2, mode, row, bf) = self.opcodes[i]
+        tag, i1, i2, j1, j2, k1, k2, mode, row, bf = self.opcodes[i]
         logger.debug(
-            "merge_wdiff3: tag={} a[{}:{}]/b[{}:{}]/c[{}:{}] mode={}, row={}, bf='{}'".format(
-                tag, i1, i2, j1, j2, k1, k2, mode, row, bf
-            )
+            f"tag={tag} a[{i1}:{i2}]/b[{j1}:{j2}]/c[{k1}:{k2}]"
+            f" mode={mode} row={row} bf='{bf}'"
         )
-        line_a = "".join(self.list_a[i1:i2])
-        line_b = "".join(self.list_b[j1:j2])
-        line_c = "".join(self.list_c[k1:k2])
         if self.isjunk:
             isjunk = None
         else:
             isjunk = lambda x: x in " \t"
+
+        line_a = "".join(self.list_a[i1:i2])
+        line_b = "".join(self.list_b[j1:j2])
+        line_c = "".join(self.list_c[k1:k2])
+
+        # logger.debug(f'line_a={[line_a]}')
+        # logger.debug(f'line_b={[line_b]}')
+        # logger.debug(f'line_c={[line_c]}')
+
         wseq = SequenceMatcher3(line_a, line_b, line_c, 0, isjunk, True)
         wopcodes = wseq.get_opcodes()
         # logger.debug("wdiff3: \nwopcodesc >>>>> {}".format(wopcodes))
@@ -208,18 +215,26 @@ class TextData:  # Non-TUI data
         clean_merge = True
         for tag, wi1, wi2, wj1, wj2, wk1, wk2 in wopcodes:
             if tag == "E" or tag == "e" or tag == "A":
-                line += line_a[wi1:wi2]
+                tmp = line_a[wi1:wi2]
+                # logger.debug(f'tag={tag} "{tmp}"')
+                line += tmp
             elif tag == "C":
-                line += line_c[wk1:wk2]
+                tmp = line_c[wk1:wk2]
+                # logger.debug(f'tag={tag} "{tmp}"')
+                line += tmp
             else:  # tag == "N"
                 clean_merge = False
-                line += self.ws0
-                line += line_a[wi1:wi2]
-                line += self.ws1
-                line += line_b[wj1:wj2]
-                line += self.ws2
-                line += line_c[wk1:wk2]
-                line += self.ws3
+                tmp = ''
+                tmp += self.ws0
+                tmp += line_a[wi1:wi2]
+                tmp += self.ws1
+                tmp += line_b[wj1:wj2]
+                tmp += self.ws2
+                tmp += line_c[wk1:wk2]
+                tmp += self.ws3
+                # logger.debug(f'tag={tag}')
+                # logger.debug(f'{tmp}')
+                line += tmp
         content = line.splitlines(keepends=True)
         return (clean_merge, content)
 
@@ -323,7 +338,7 @@ class TextData:  # Non-TUI data
 
     def set_all_mode(self, new_mode):
         for i in range(len(self.opcodes)):
-            logger.debug("set_all_mode: i={} {}".format(i, new_mode))
+            logger.debug(f"set_all_mode: i={i} {new_mode}")
             self.set_mode(i, new_mode)
         return
 
@@ -500,13 +515,13 @@ class TextData:  # Non-TUI data
             # special handling of upper case letters
             if c + 32 in list(self.kc.keys()):
                 c = self.kc[c + 32] - 32
-            logger.debug("c_translated chr = '{}'".format(chr(c)))
+            logger.debug(f"c_translated chr = '{chr(c)}'")
         elif c >= ord(" ") and c <= ord("~"):
             if c in list(self.kc.keys()):
                 c = self.kc[c]
-            logger.debug("c_translated chr = '{}'".format(chr(c)))
+            logger.debug(f"c_translated chr = '{chr(c)}'")
         else:
-            logger.debug("c_translated num = '{}'".format(c))
+            logger.debug(f"c_translated num = '{c}'")
         return c
 
     def getch_translated(self):  # overridden for TUI by subclassing
